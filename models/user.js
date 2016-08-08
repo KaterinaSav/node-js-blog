@@ -11,6 +11,15 @@ var schema = new Schema({
     unique: true,
     required: true
   },
+  firstName: {
+    type: String
+  },
+  lastName: {
+    type: String
+  },
+  city: {
+    type: String
+  },
   hashedPassword: {
     type: String,
     required: true
@@ -62,6 +71,29 @@ schema.statics.authorize = function(username, password, callback) {
           callback(null, user);
         });
       }
+    }
+  ], callback);
+};
+
+schema.statics.update = function(userId, username, firstName, lastName, city, callback) {
+  var User = this;
+  async.waterfall([
+    function (callback) {
+      User.findById(userId, callback);
+    },
+    function (user, callback) {
+
+      user.username = username;
+      user.firstName = firstName;
+      user.lastName = lastName;
+      user.city = city;
+
+      user.save(function(err) {
+        if (err) throw err;
+        callback(null, user);
+
+        console.log('User successfully updated!');
+      });
     }
   ], callback);
 };
