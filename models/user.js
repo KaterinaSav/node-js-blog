@@ -98,6 +98,23 @@ schema.statics.update = function(userId, username, firstName, lastName, city, ca
   ], callback);
 };
 
+schema.statics.destroy = function(userId, callback) {
+  var User = this;
+  async.waterfall([
+    function (callback) {
+      User.findById(userId, callback);
+    },
+    function (user, callback) {
+
+      user.remove( function( err, user) {
+        if (err) throw err;
+        callback(null, user);
+        console.log("Destroyed: " + user + " successfully!");
+      });
+    }
+  ], callback);
+};
+
 exports.User = mongoose.model('User', schema);
 
 function AuthError(message) {

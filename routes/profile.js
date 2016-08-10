@@ -30,7 +30,33 @@ router.post('/:id/edit', function (req, res, next) {
 });
 
 router.get('/:id/edit', function(req, res, next) {
-  res.render('profile/profile_edit');
+  var userId = req.user._id;
+  var paramsID = req.params.id;
+
+
+  if (userId == paramsID) {
+    res.render('profile/profile_edit');
+  } else {
+    res.render('error');
+  }
+
+});
+
+router.post('/:id/destroy', function(req, res, next) {
+  var userId = req.user._id;
+  var paramsID = req.params.id;
+
+    User.destroy(userId, function(err, user) {
+      if (err) {
+        if (err instanceof HttpError) {
+          return next(new HttpError(403, err.message));
+        } else {
+          return next(err);
+        }
+      }
+
+      res.redirect('/');
+    });
 });
 
 

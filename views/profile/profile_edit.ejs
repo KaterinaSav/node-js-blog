@@ -2,6 +2,10 @@
 <% block('title', "My Profile") %>
 
 <p class="lead">Hi, <%=user.username%></p>
+<div class="col-lg-offset-11 col-lg-10">
+  <a href= href="" onclick="$('<form method=POST action=/profile/<%= user._id %>/destroy/>').submit();return false">Delete Profile</a>
+  <span class="help-block error"></span>
+</div>
 
 <form class="form-horizontal login-form" name="profile-edit-form">
   <div class="form-group">
