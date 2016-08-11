@@ -1,0 +1,12 @@
+<% layout('layout/page') -%>
+<% block('title', "Blog") -%>
+
+<script src="/vendor/bower_components/socket.io-client/socket.io.js"></script>
+
+<div id="room">
+    <ul></ul>
+    <form>
+        <input class="form-control" autocomplete="off" autofocus placeholder="Сообщение...">
+    </form>
+</div>
+
