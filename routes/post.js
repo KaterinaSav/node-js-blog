@@ -1,10 +1,37 @@
 var express = require('express');
 var router = express.Router();
 var Post = require('../models/post').Post;
+var ObjectID = require('mongodb').ObjectID;
 var HttpError = require('../error').HttpError;
 
 router.get('/', function(req, res, next) {
-  res.render('posts/index', { title: 'New post' });
+
+  Post.find({}, function(err, posts) {
+    if (err) throw err;
+
+    req.posts = res.locals.posts = posts;
+    res.render('posts/index');
+  });
+
+});
+
+router.get('/:id', function(req, res, next) {
+  var postID = req.params.id;
+  console.log(req.params.id);
+  try {
+    var id = new ObjectID(req.params.id);
+  } catch (e) {
+    return next(404);
+  }
+  Post.findById(req.params.id, function(err, post) {
+    if (err) return next(err);
+    if (!post) {
+      next(new HttpError(404, 'post not found'));
+    } else {
+      req.post = res.locals.post = post;
+      res.render('posts/show');
+    }
+  });
 });
 
 router.get('/new', function(req, res, next) {

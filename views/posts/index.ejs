@@ -4,9 +4,12 @@
 <script src="/vendor/bower_components/socket.io-client/socket.io.js"></script>
 
 <div id="room">
-    <ul></ul>
     <form>
-        <input class="form-control" autocomplete="off" autofocus placeholder="Сообщение...">
+        <ul>
+            <% posts.forEach(function(post) { %>
+            <li><a href="/posts/<%= post._id %>"><%= post.title %></a></li>
+            <% }) %>
+        </ul>
     </form>
 </div>
 

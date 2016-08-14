@@ -47,7 +47,7 @@ app.use('/users', require('./routes/users'));
 app.use('/chat', checkAuth, require('./routes/chat'));
 app.use('/logout', require('./routes/logout'));
 app.use('/profile', require('./routes/profile'));
-app.use('/post', require('./routes/post'));
+app.use('/posts', checkAuth, require('./routes/post'));
 
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
