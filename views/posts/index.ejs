@@ -1,0 +1,15 @@
+<% layout('layout/page') -%>
+<% block('title', "Blog") -%>
+
+<script src="/vendor/bower_components/socket.io-client/socket.io.js"></script>
+
+<div id="room">
+    <form>
+        <ul>
+            <% posts.forEach(function(post) { %>
+            <li><a href="/posts/<%= post._id %>"><%= post.title %></a></li>
+            <% }) %>
+        </ul>
+    </form>
+</div>
+

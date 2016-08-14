@@ -35,7 +35,7 @@ router.get('/:id/edit', function(req, res, next) {
 
 
   if (userId == paramsID) {
-    res.render('profile/profile_edit');
+    res.render('profile/profileEdit');
   } else {
     res.render('error');
   }
