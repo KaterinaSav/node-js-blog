@@ -7,7 +7,7 @@ var Comment = require('../models/comment').Comment;
 
 router.get('/', function(req, res, next) {
 
-  Post.find({}).populate('author').exec(function(err, posts) {
+  Post.find({}).sort({created: -1}).populate('author').exec(function(err, posts) {
     if (err) throw err;
     res.locals.current_user = false;
     req.posts = res.locals.posts = posts;
@@ -34,7 +34,7 @@ router.get('/:id', function(req, res, next) {
       next(new HttpError(404, 'post not found'));
     } else {
       req.post = res.locals.post = post;
-      Comment.find({postId: post._id},  function(err, comments) {
+      Comment.find({postId: post._id}).populate('author').exec(function(err, comments) {
         if (err) throw err;
         req.post = res.locals.post = post;
         res.locals.comments = comments;

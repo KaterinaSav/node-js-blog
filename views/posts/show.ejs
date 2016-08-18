@@ -12,6 +12,7 @@
     </form>
 </div>
 <ul>
+    <p>Count of comments: <%= comments.length %></p>
     <% comments.forEach(function(comment) { %>
     <li><%= comment.author.username %></li>
     <p class="lead"><%= comment.title %></p>
