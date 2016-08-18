@@ -10,6 +10,7 @@
         <% } %>
         <ul>
             <% posts.forEach(function(post) { %>
+            <li ><a href="/profile/<%= post.author %>"><%= post.author.username %></a></li>
             <li class="lead"><a href="/posts/<%= post._id %>"><%= post.title %></a></li>
             <% }) %>
         </ul>

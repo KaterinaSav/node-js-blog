@@ -7,7 +7,7 @@ var Comment = require('../models/comment').Comment;
 
 router.get('/', function(req, res, next) {
 
-  Post.find({}, function(err, posts) {
+  Post.find({}).populate('author').exec(function(err, posts) {
     if (err) throw err;
     res.locals.current_user = false;
     req.posts = res.locals.posts = posts;
@@ -48,9 +48,9 @@ router.get('/:id', function(req, res, next) {
 router.post('/new', function(req, res, next) {
   var title = req.body.title;
   var body = req.body.body;
-  var userId = req.user._id;
+  var user = req.user;
 
-  Post.create(title, body, userId, function(err, post) {
+  Post.create(title, body, user, function(err, post) {
     if (err) {
       if (err instanceof HttpError) {
         return next(new HttpError(403, err.message));
@@ -59,7 +59,7 @@ router.post('/new', function(req, res, next) {
       }
     }
 
-    res.redirect('/profile/' + userId);
+    res.redirect('/profile/' + user._id);
   });
 });
 
@@ -104,9 +104,9 @@ router.post('/:id/edit', function (req, res, next) {
 router.post('/:id/comment', function (req, res, next) {
   var title = req.body.title;
   var postId = req.params.id;
-  var userID = req.user._id;
+  var user = req.user;
 
-  Comment.create(title, userID, postId, function (err, comment) {
+  Comment.create(title, user, postId, function (err, comment) {
     if (err) {
       if (err) {
         return next(new HttpError(500, err.message));

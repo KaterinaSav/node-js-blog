@@ -14,8 +14,9 @@ var schema = new Schema({
     type: String,
     required: true
   },
-  authorId: {
-    type: String
+  author: {
+    type: Schema.Types.ObjectId,
+    ref: 'User'
   },
   created: {
     type: Date,
@@ -23,11 +24,11 @@ var schema = new Schema({
   }
 });
 
-schema.statics.create = function(title, body, userId, callback) {
+schema.statics.create = function(title, body, user, callback) {
   var Post = this;
   async.waterfall([
     function (callback) {
-      var post = new Post({title: title, body: body, authorId: userId});
+      var post = new Post({title: title, body: body, author: user});
       post.save(function (err) {
         if (err) throw err;
         callback(null, post);
