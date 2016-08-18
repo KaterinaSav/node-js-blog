@@ -3,6 +3,7 @@ var router = express.Router();
 var Post = require('../models/post').Post;
 var ObjectID = require('mongodb').ObjectID;
 var HttpError = require('../error').HttpError;
+var Comment = require('../models/comment').Comment;
 
 router.get('/', function(req, res, next) {
 
@@ -33,7 +34,12 @@ router.get('/:id', function(req, res, next) {
       next(new HttpError(404, 'post not found'));
     } else {
       req.post = res.locals.post = post;
-      res.render('posts/show');
+      Comment.find({postId: post._id},  function(err, comments) {
+        if (err) throw err;
+        req.post = res.locals.post = post;
+        res.locals.comments = comments;
+        res.render('posts/show');
+      });
     }
   });
 });
@@ -93,6 +99,25 @@ router.post('/:id/edit', function (req, res, next) {
 
   });
 
+});
+
+router.post('/:id/comment', function (req, res, next) {
+  var title = req.body.title;
+  var postId = req.params.id;
+  var userID = req.user._id;
+
+  Comment.create(title, userID, postId, function (err, comment) {
+    if (err) {
+      if (err) {
+        return next(new HttpError(500, err.message));
+      } else {
+        return next(err);
+      }
+    }
+
+    res.send({});
+
+  });
 });
 
 router.post('/:id/destroy', function(req, res, next) {

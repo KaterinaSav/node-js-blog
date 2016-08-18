@@ -29,7 +29,7 @@ schema.statics.create = function(title, body, userId, callback) {
     function (callback) {
       var post = new Post({title: title, body: body, authorId: userId});
       post.save(function (err) {
-        if (err) return next(err);
+        if (err) throw err;
         callback(null, post);
 
         console.log('Post successfully created!');
