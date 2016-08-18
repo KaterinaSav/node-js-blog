@@ -43,8 +43,6 @@ var checkAuth = require('./middleware/checkAuth');
 
 app.use('/', require('./routes/index'));
 app.use('/login', require('./routes/login'));
-app.use('/users', require('./routes/users'));
-app.use('/chat', checkAuth, require('./routes/chat'));
 app.use('/logout', require('./routes/logout'));
 app.use('/profile', require('./routes/profile'));
 app.use('/posts', checkAuth, require('./routes/post'));

@@ -126,15 +126,10 @@ module.exports = function(server) {
 
 	io.on('connection', function (socket) {
 		var username = socket.handshake.user.get('username');
-		socket.broadcast.emit('join', username);
 
 		socket.on('message', function (text, cb) {
 			socket.broadcast.emit('message',username, text);
 			cb && cb();
-		});
-
-		socket.on('disconnect', function() {
-			socket.broadcast.emit('leave', username);
 		});
 	});
 
