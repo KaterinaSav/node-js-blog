@@ -39,4 +39,41 @@ schema.statics.create = function(title, body, userId, callback) {
   ], callback);
 };
 
+schema.statics.update = function(postID, title, body, callback) {
+  var Post = this;
+  async.waterfall([
+    function (callback) {
+      Post.findById(postID, callback);
+    },
+    function (post, callback) {
+      post.title = title;
+      post.body = body;
+
+      post.save(function(err) {
+        if (err) throw err;
+        callback(null, post);
+
+        console.log('Post successfully updated!');
+      });
+    }
+  ], callback);
+};
+
+schema.statics.destroy = function(postId, callback) {
+  var Post = this;
+  async.waterfall([
+    function (callback) {
+      Post.findById(postId, callback);
+    },
+    function (post, callback) {
+
+      post.remove( function( err, post) {
+        if (err) throw err;
+        callback(null, post);
+        console.log("Destroyed: " + post.title + " successfully!");
+      });
+    }
+  ], callback);
+};
+
 exports.Post = mongoose.model('Post', schema);
