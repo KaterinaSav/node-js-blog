@@ -31,7 +31,7 @@
         $('.error', form).html('');
         $(":submit", form).button("loading");
         $.ajax({
-            url: "/post/new",
+            url: "/posts/new",
             method: "POST",
             data: form.serialize(),
             complete: function() {

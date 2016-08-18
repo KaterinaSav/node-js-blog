@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var User = require('../models/user').User;
+var Post = require('../models/post').Post;
 var HttpError = require('../error').HttpError;
 
 router.get('/:id', function(req, res, next) {
@@ -39,6 +40,19 @@ router.get('/:id/edit', function(req, res, next) {
   } else {
     res.render('error');
   }
+
+});
+
+router.get('/:id/posts', function(req, res, next) {
+  var paramsID = req.params.id;
+  var userId = req.user._id;
+
+  Post.find({authorId: paramsID }, function(err, posts) {
+    if (err) throw err;
+    res.locals.current_user = (userId == paramsID) ? true : false
+    req.posts = res.locals.posts = posts;
+    res.render('posts/index');
+  });
 
 });
 

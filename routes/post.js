@@ -8,16 +8,20 @@ router.get('/', function(req, res, next) {
 
   Post.find({}, function(err, posts) {
     if (err) throw err;
-
+    res.locals.current_user = false;
     req.posts = res.locals.posts = posts;
     res.render('posts/index');
   });
 
 });
 
+router.get('/new', function(req, res, next) {
+  res.render('posts/newPost', { title: 'New post' });
+});
+
 router.get('/:id', function(req, res, next) {
   var postID = req.params.id;
-  console.log(req.params.id);
+
   try {
     var id = new ObjectID(req.params.id);
   } catch (e) {
@@ -34,9 +38,6 @@ router.get('/:id', function(req, res, next) {
   });
 });
 
-router.get('/new', function(req, res, next) {
-  res.render('posts/newPost', { title: 'New post' });
-});
 
 router.post('/new', function(req, res, next) {
   var title = req.body.title;
