@@ -13,7 +13,8 @@
 </div>
 <ul>
     <% comments.forEach(function(comment) { %>
-    <li class="lead"><%= comment.title %></li>
+    <li><%= comment.author.username %></li>
+    <p class="lead"><%= comment.title %></p>
     <% }) %>
 </ul>
 
