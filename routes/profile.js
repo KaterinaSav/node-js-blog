@@ -5,6 +5,9 @@ var Post = require('../models/post').Post;
 var HttpError = require('../error').HttpError;
 
 router.get('/:id', function(req, res, next) {
+  var paramsID = req.params.id;
+  var userId = req.user._id;
+  res.locals.current_user = (userId == paramsID) ? true : false
   res.render('profile/profile');
 });
 

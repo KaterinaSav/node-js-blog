@@ -1,6 +1,65 @@
 <% layout('/layout/page') -%>
 <% block('title', 'Привет ≥︺‿︺≤'); -%>
 
-<p class="lead"><%=user.username%></p>
-<a href="/profile/<%= user._id %>/edit/">Edit Profile</a>
-<a href="/profile/<%= user._id %>/posts">User Posts</a>
+<div id="room" class="row">
+    <form>
+        <div class="container-fluid">
+            <div class="col-sm-5">
+
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th><h1><%=user.username%></h1></th>
+                        <th>
+                            <ul class="list-inline">
+                                <li><a href="/profile/<%= user._id %>/posts" class="btn btn-info btn-sm">User's Posts</a></li>
+                                <% if (current_user) {%>
+                                    <li>
+                                        <span><a href="/profile/<%= user._id %>/edit/" class="btn btn-info btn-sm" role="button"><span class="glyphicon glyphicon-pencil"></span></a></span>
+                                    </li>
+                                <% } %>
+                            </ul>
+                        </th>
+                    </tr>
+
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                               <b>Username</b>
+                            </td>
+                            <td>
+                                <%= user.username%>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <b>First Name</b>
+                            </td>
+                            <td>
+                                <% if (user.firstName) {%><%= user.firstName%><% } else {%>...<%} %>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <b>Last Name</b>
+                            </td>
+                            <td>
+                                <% if (user.lastName) {%><%= user.lastName%><% } else {%>...<%} %>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <b>City</b>
+                            </td>
+                            <td>
+                                <% if (user.city) {%><%= user.city%><% } else {%>...<%} %>
+                            </td>
+                        </tr>
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+    </form>
+</div>
