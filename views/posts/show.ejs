@@ -3,21 +3,45 @@
 
 <script src="/vendor/bower_components/socket.io-client/socket.io.js"></script>
 
-<p class="lead"><%=post.body%></p>
+<div id="room" class="row" >
+    <form name="comment-form">
+        <div class="container-fluid">
+            <div class="col-sm-12 blog-post">
+                <ul class="list-inline">
+                    <li><a href="/profile/<%= post.author %>" class="btn btn-primary btn-xs"><%= post.author.username %></a></li>
+                    <li><span class="label label-info"><%= post.created.toDateString()%>, <%= post.created.getHours()%>:<%= post.created.getMinutes()%></span></li>
+                </ul>
+                <h2><%= post.title%></h2>
+                <p class="lead"><%=post.body%></p>
+            </div>
+            <div class="col-sm-7">
+                <table class=" table comments">
+                    <thead>
+                        <tr>
+                            <th><input class="form-control" autocomplete="off" name="title" autofocus placeholder="Комментарий..."></th>
+                            <td><button id="toggle-comments" class="btn btn-default">Comments: <%= comments.length %></button></td>
+                        </tr>
 
-<div id="room">
-    <ul></ul>
-    <form  name="comment-form">
-        <input class="form-control" autocomplete="off" name="title" autofocus placeholder="Комментарий...">
+                    </thead>
+                    <tbody>
+                    <% comments.forEach(function(comment) { %>
+                    <tr>
+                        <td>
+                            <ul class="list-inline">
+                                <li><a href="/profile/<%= comment.author %>" class="btn btn-primary btn-xs"><%= comment.author.username %></a></li>
+                                <li><span class="label label-info"><%= comment.created.toDateString()%>, <%= comment.created.getHours()%>:<%= comment.created.getMinutes()%></span></li>
+                            </ul>
+                            <p><%= comment.title %></p>
+                        </td>
+                    </tr>
+                    <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </form>
 </div>
-<ul>
-    <p>Count of comments: <%= comments.length %></p>
-    <% comments.forEach(function(comment) { %>
-    <li><%= comment.author.username %></li>
-    <p class="lead"><%= comment.title %></p>
-    <% }) %>
-</ul>
+
 
 <script>
     $(document.forms['comment-form']).on('submit', function() {
@@ -42,6 +66,13 @@
                 }
             }
         });
+
         return false;
+    });
+    $(document).ready(function(){
+        $("tbody").hide();
+        $("#toggle-comments").click(function(){
+            $("tbody").toggle();
+        });
     });
 </script>
