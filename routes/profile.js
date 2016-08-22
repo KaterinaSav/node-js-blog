@@ -5,6 +5,9 @@ var Post = require('../models/post').Post;
 var HttpError = require('../error').HttpError;
 
 router.get('/:id', function(req, res, next) {
+  var paramsID = req.params.id;
+  var userId = req.user._id;
+  res.locals.current_user = (userId == paramsID) ? true : false
   res.render('profile/profile');
 });
 
@@ -47,7 +50,7 @@ router.get('/:id/posts', function(req, res, next) {
   var paramsID = req.params.id;
   var userId = req.user._id;
 
-  Post.find({authorId: paramsID }, function(err, posts) {
+  Post.find({author: paramsID }).populate('author').exec(function(err, posts) {
     if (err) throw err;
     res.locals.current_user = (userId == paramsID) ? true : false
     req.posts = res.locals.posts = posts;

@@ -1,9 +1,9 @@
 <% layout('/layout/page') -%>
 <% block('title', "My Profile") %>
 
-<p class="lead">Hi, <%=user.username%></p>
+<h1><%=user.username%></h1>
 <div class="col-lg-offset-11 col-lg-10">
-  <a href= href="" onclick="$('<form method=POST action=/profile/<%= user._id %>/destroy/>').submit();return false">Delete Profile</a>
+  <a href= href="" onclick="$('<form method=POST action=/profile/<%= user._id %>/destroy/>').submit();return false" class="btn btn-danger btn-xs">Delete Profile</a>
   <span class="help-block error"></span>
 </div>
 
@@ -19,26 +19,26 @@
     <label for="input-firstName" class="col-lg-2 control-label">First Name</label>
 
     <div class="col-lg-10">
-      <input name="firstName" value=<%=user.firstName%> type="text" class="form-control" id="input-firstName" placeholder="First Name">
+      <input name="firstName" value=<% if (user.firstName) {%><%= user.firstName%><% } else {%>""<%} %> type="text" class="form-control" id="input-firstName" placeholder="First Name">
     </div>
   </div>
   <div class="form-group">
     <label for="input-lastName" class="col-lg-2 control-label">Last Name</label>
 
     <div class="col-lg-10">
-      <input name="lastName" value=<%=user.lastName%> type="text" class="form-control" id="input-lastName" placeholder="Last Name">
+      <input name="lastName" value=<% if (user.lastName) {%><%= user.lastName%><% } else {%>""<%} %> type="text" class="form-control" id="input-lastName" placeholder="Last Name">
     </div>
   </div>
   <div class="form-group">
     <label for="input-city" class="col-lg-2 control-label">City</label>
 
     <div class="col-lg-10">
-      <input name="city" value=<%=user.city%> type="text" class="form-control" id="input-city" placeholder="City">
+      <input name="city" value=<% if (user.city) {%><%= user.city%><% } else {%>""<%} %> type="text" class="form-control" id="input-city" placeholder="City">
     </div>
   </div>
   <div class="form-group">
     <div class="col-lg-offset-2 col-lg-10">
-      <button type="submit" class="btn btn-primary" data-loading-text="Ok">Ok</button>
+      <button type="submit" class="btn btn-primary" data-loading-text="Ok">Save</button>
       <span class="help-block error"></span>
     </div>
   </div>
