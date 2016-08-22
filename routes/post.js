@@ -138,6 +138,19 @@ router.post('/:id/rating', function (req, res, next) {
   });
 });
 
+router.post('/:id/rating/destroy', function (req, res, next) {
+  var postId = req.params.id;
+  var user = req.user;
+
+  Post.findById(postId, function(err, post) {
+    if (err) return next(err);
+    Rating.destroy(user, post, function (err, rating) {
+      if (err) return next(err);
+      res.send({});
+    });
+  });
+});
+
 router.post('/:id/destroy', function(req, res, next) {
   var postId = req.params.id;
 

@@ -42,4 +42,22 @@ schema.statics.create = function(value, author, post, callback) {
   ], callback);
 };
 
+schema.statics.destroy = function(author, post, callback) {
+  var Rating = this;
+  async.waterfall([
+    function (callback) {
+      Rating.findOne({author: author, post: post}, callback);
+    },
+    function (rating, callback) {
+
+      rating.remove( function( err, rating) {
+        if (err) throw err;
+        callback(null, rating);
+
+        console.log('rating successfully destroyed!');
+      });
+    }
+  ], callback);
+};
+
 exports.Rating = mongoose.model('Rating', schema);
