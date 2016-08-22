@@ -23,25 +23,37 @@ router.get('/new', function(req, res, next) {
 
 router.get('/:id', function(req, res, next) {
   var postID = req.params.id;
+  var average_rating;
+  var values = [];
 
-  try {
-    var id = new ObjectID(req.params.id);
-  } catch (e) {
-    return next(404);
-  }
-  Post.findById(req.params.id).populate('author').exec( function(err, post) {
+  Post.findById(postID).populate('author').exec( function(err, post) {
     if (err) return next(err);
     if (!post) {
       next(new HttpError(404, 'post not found'));
     } else {
       req.post = res.locals.post = post;
       Comment.find({postId: post._id}).sort({created: -1}).populate('author').exec(function(err, comments) {
-        Rating.findOne({author: req.user, post: postID}, function(err, rating) {
-          if (err) throw err;
-          req.post = res.locals.post = post;
-          res.locals.comments = comments;
-          res.locals.rating = rating ? rating : 0;
-          res.render('posts/show');
+        Rating.find({post: post}, function(err, ratings) {
+          ratings.forEach(function (rating) {
+            values.push(rating.value);
+          });
+          if (values.length > 0) {
+            var sum = values.reduce(function (a, b) {
+              return a + b;
+            });
+            average_rating = sum / values.length;
+          };
+
+          Rating.findOne({author: req.user, post: postID}, function (err, rating) {
+            if (err) throw err;
+
+            req.post = res.locals.post = post;
+            res.locals.comments = comments;
+            res.locals.average_rating = average_rating ? average_rating : 0;
+            res.locals.voted = values.length;
+            res.locals.rating = rating ? rating : 0;
+            res.render('posts/show');
+          });
         });
       });
     }
