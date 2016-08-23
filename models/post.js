@@ -25,7 +25,7 @@ var schema = new Schema({
   }
 });
 
-schema.index({ title: 'text'});
+schema.index({ title: 'text' });
 
 schema.statics.create = function(title, body, user, callback) {
   var Post = this;

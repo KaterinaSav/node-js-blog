@@ -1,18 +1,15 @@
 var express = require('express');
 var router = express.Router();
 var Post = require('../models/post').Post;
-var ObjectID = require('mongodb').ObjectID;
 var HttpError = require('../error').HttpError;
 var Comment = require('../models/comment').Comment;
 var Rating = require('../models/rating').Rating;
 
 router.get('/', function(req, res, next) {
 
-  Post.find({}).sort({created: -1}).populate('author').exec(function(err, posts) {
+  Post.find().sort({created: -1}).populate('author').exec(function(err, posts) {
     if (err) throw err;
-    res.locals.current_user = true;
-    req.posts = res.locals.posts = posts;
-    res.render('posts/index');
+    res.render('posts/index', { posts:posts, current_user: true });
   });
 
 });
@@ -23,9 +20,10 @@ router.get('/new', function(req, res, next) {
 
 router.post('/search', function(req, res, next) {
   var text = req.body.text_search;
-
-  Post.find({ $text : { $search : text }})
+  var search_params = (text == "") ? {} : { $text : { $search : text }};
+  Post.find(search_params)
       .limit(20)
+      .populate('author')
       .exec(function (err, posts) {
         req.posts = res.locals.posts = posts;
         res.render('partials/postsList',{ posts:posts, current_user: true });
