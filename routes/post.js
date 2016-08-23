@@ -28,7 +28,7 @@ router.post('/search', function(req, res, next) {
       .limit(20)
       .exec(function (err, posts) {
         req.posts = res.locals.posts = posts;
-        res.render('posts/index',{posts:posts, current_user: true});
+        res.render('partials/postsList',{ posts:posts, current_user: true });
       });
 });
 

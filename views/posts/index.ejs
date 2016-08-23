@@ -22,23 +22,9 @@
                         </span>
                     </div>
                 </div>
-            <table class="table blog-post" >
-                <tbody id="table-posts">
-                    <% posts.forEach(function(post) { %>
-                        <tr>
-                            <td>
-                                <ul class="list-inline">
-                                    <li><a href="/profile/<%= post.author %>" class="btn btn-primary btn-xs"><%= post.author.username %></a></li>
-                                    <li><span class="label label-info"><%= post.created.toDateString()%>, <%= post.created.getHours()%>:<%= post.created.getMinutes()%></span></li>
-                                </ul>
-                                <p class="lead"><a href="/posts/<%= post._id %>"><%= post.title %></a></p>
-                                <p><%= post.body %></p>
-                            </td>
-                        </tr>
-                    <% }) %>
-                </tbody>
-
-            </table>
+                <div id="posts-list">
+                    <%-partial('../partials/postsList')%>
+                </div>
             </div>
         </div>
     </form>
@@ -58,7 +44,7 @@
             },
             statusCode: {
                 200: function(data) {
-                    $('body').html(data);
+                    $('#posts-list').html(data);
                 }
             }
         });
