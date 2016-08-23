@@ -4,16 +4,26 @@
 <script src="/vendor/bower_components/socket.io-client/socket.io.js"></script>
 
 <div id="room" class="row">
-    <form>
+    <form name="index-posts-form">
         <div class="container-fluid">
             <div class="col-sm-12">
+                <div class="col-md-9">
                 <h1>Blog
                     <% if (current_user) {%>
                     <span><a href="/posts/new" class="btn btn-default" role="button"><span class="glyphicon glyphicon-plus "></span></a></span>
                     <% } %>
                 </h1>
-            <table class="table blog-post">
-                <tbody>
+                    </div>
+                <div class="col-md-3">
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="text_search" placeholder="Search for...">
+                        <span class="input-group-btn">
+                            <button class="btn btn-secondary" id="search" type="submit">Go!</button>
+                        </span>
+                    </div>
+                </div>
+            <table class="table blog-post" >
+                <tbody id="table-posts">
                     <% posts.forEach(function(post) { %>
                         <tr>
                             <td>
@@ -33,4 +43,26 @@
         </div>
     </form>
 </div>
+<script>
+    $(document.forms['index-posts-form']).on('submit', function(e) {
+        e.preventDefault();
+        var form = $(this);
+        $('.error', form).html('');
+        $(":submit", form).button("loading");
+        $.ajax({
+            url: "/posts/search",
+            method: "POST",
+            data: form.serialize(),
+            complete: function() {
+                $(":submit", form).button("reset");
+            },
+            statusCode: {
+                200: function(data) {
+                    $('body').html(data);
+                }
+            }
+        });
+        return false;
+    });
+</script>
 

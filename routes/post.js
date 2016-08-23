@@ -21,6 +21,17 @@ router.get('/new', function(req, res, next) {
   res.render('posts/newPost', { title: 'New post' });
 });
 
+router.post('/search', function(req, res, next) {
+  var text = req.body.text_search;
+
+  Post.find({ $text : { $search : text }})
+      .limit(20)
+      .exec(function (err, posts) {
+        req.posts = res.locals.posts = posts;
+        res.render('posts/index',{posts:posts, current_user: true});
+      });
+});
+
 router.get('/:id', function(req, res, next) {
   var postID = req.params.id;
   var average_rating;

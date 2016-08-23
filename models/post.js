@@ -8,7 +8,8 @@ var mongoose = require('../lib/mongoose'),
 var schema = new Schema({
   title: {
     type: String,
-    required: true
+    required: true,
+    text: true
   },
   body: {
     type: String,
@@ -23,6 +24,8 @@ var schema = new Schema({
     default: Date.now
   }
 });
+
+schema.index({ title: 'text'});
 
 schema.statics.create = function(title, body, user, callback) {
   var Post = this;
