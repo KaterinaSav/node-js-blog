@@ -4,33 +4,51 @@
 <script src="/vendor/bower_components/socket.io-client/socket.io.js"></script>
 
 <div id="room" class="row">
-    <form>
+    <form name="index-posts-form">
         <div class="container-fluid">
             <div class="col-sm-12">
+                <div class="col-md-9">
                 <h1>Blog
                     <% if (current_user) {%>
                     <span><a href="/posts/new" class="btn btn-default" role="button"><span class="glyphicon glyphicon-plus "></span></a></span>
                     <% } %>
                 </h1>
-            <table class="table blog-post">
-                <tbody>
-                    <% posts.forEach(function(post) { %>
-                        <tr>
-                            <td>
-                                <ul class="list-inline">
-                                    <li><a href="/profile/<%= post.author %>" class="btn btn-primary btn-xs"><%= post.author.username %></a></li>
-                                    <li><span class="label label-info"><%= post.created.toDateString()%>, <%= post.created.getHours()%>:<%= post.created.getMinutes()%></span></li>
-                                </ul>
-                                <p class="lead"><a href="/posts/<%= post._id %>"><%= post.title %></a></p>
-                                <p><%= post.body %></p>
-                            </td>
-                        </tr>
-                    <% }) %>
-                </tbody>
-
-            </table>
+                    </div>
+                <div class="col-md-3">
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="text_search" placeholder="Search for...">
+                        <span class="input-group-btn">
+                            <button class="btn btn-secondary" id="search" type="submit">Go!</button>
+                        </span>
+                    </div>
+                </div>
+                <div id="posts-list">
+                    <%-partial('../partials/postsList')%>
+                </div>
             </div>
         </div>
     </form>
 </div>
+<script>
+    $(document.forms['index-posts-form']).on('submit', function(e) {
+        e.preventDefault();
+        var form = $(this);
+        $('.error', form).html('');
+        $(":submit", form).button("loading");
+        $.ajax({
+            url: "/posts/search",
+            method: "POST",
+            data: form.serialize(),
+            complete: function() {
+                $(":submit", form).button("reset");
+            },
+            statusCode: {
+                200: function(data) {
+                    $('#posts-list').html(data);
+                }
+            }
+        });
+        return false;
+    });
+</script>
 

@@ -9,7 +9,8 @@ var schema = new Schema({
   username: {
     type: String,
     unique: true,
-    required: true
+    required: true,
+    text: true
   },
   firstName: {
     type: String
@@ -31,8 +32,14 @@ var schema = new Schema({
   created: {
     type: Date,
     default: Date.now
-  }
+  },
+  posts : [{
+    type: Schema.Types.ObjectId,
+    ref: 'Post'
+  }]
 });
+
+schema.index({ username: 'text' });
 
 schema.methods.encryptPassword = function(password) {
   return crypto.createHmac('sha1', this.salt).update(password).digest('hex');

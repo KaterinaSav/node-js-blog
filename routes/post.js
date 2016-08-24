@@ -1,24 +1,42 @@
 var express = require('express');
 var router = express.Router();
 var Post = require('../models/post').Post;
-var ObjectID = require('mongodb').ObjectID;
 var HttpError = require('../error').HttpError;
 var Comment = require('../models/comment').Comment;
 var Rating = require('../models/rating').Rating;
+var User = require('../models/user').User;
 
 router.get('/', function(req, res, next) {
 
-  Post.find({}).sort({created: -1}).populate('author').exec(function(err, posts) {
+  Post.find().sort({created: -1}).populate('author').exec(function(err, posts) {
     if (err) throw err;
-    res.locals.current_user = true;
-    req.posts = res.locals.posts = posts;
-    res.render('posts/index');
+    res.render('posts/index', { posts:posts, current_user: true });
   });
 
 });
 
 router.get('/new', function(req, res, next) {
   res.render('posts/newPost', { title: 'New post' });
+});
+
+router.post('/search', function(req, res, next) {
+  var text = req.body.text_search;
+  var searchParams = (text == "") ? {} : { $text : { $search : text }};
+  Post.find(searchParams)
+      .limit(20)
+      .populate({ path: 'author', select: 'username' })
+      .exec(function (err, posts) {
+        User.find(searchParams)
+            .limit(20)
+            .populate('posts')
+            .exec(function (err, users) {
+              var allPosts =posts;
+              users.forEach(function (user) {
+                allPosts = posts.concat(user.posts);
+              });
+              res.render('partials/postsList',{ posts: allPosts, current_user: true });
+            });
+      });
 });
 
 router.get('/:id', function(req, res, next) {
