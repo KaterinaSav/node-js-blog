@@ -14,6 +14,9 @@
                     <li><span class="label label-info"><%= post.created.toDateString()%>, <%= post.created.getHours()%>:<%= post.created.getMinutes()%></span></li>
                     <li><span class="label label-info">Average rating: <%= average_rating %> (voted: <%= voted %>)</span></li>
                     <li><input id="input-id" name="input-name" type="number" value="<%= rating.value %>" class="rating" min=1 max=5 step=1 data-size="xs"></li>
+                    <% if (current_user_author) {%>
+                    <li><a href="/posts/<%= post._id %>/edit" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-pencil"></span></a></li>
+                    <% } %>
                 </ul>
                 <h2><%= post.title%></h2>
                 <p class="lead"><%=post.body%></p>

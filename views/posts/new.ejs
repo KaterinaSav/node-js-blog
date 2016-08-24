@@ -3,26 +3,7 @@
 
 <p class="lead">You, <%=user.username%>, are creating new post</p>
 <form class="form-horizontal login-form" name="post-new-form">
-    <div class="form-group">
-        <label for="input-title" class="col-lg-2 control-label">Title</label>
-
-        <div class="col-lg-10">
-            <input name="title" type="text" class="form-control" id="input-title" placeholder="Title">
-        </div>
-    </div>
-    <div class="form-group">
-        <label for="input-body" class="col-lg-2 control-label">Body</label>
-
-        <div class="col-lg-10">
-            <textarea class="form-control" rows="10" name="body" type="text" id="input-body" placeholder="Body"></textarea>
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-lg-offset-2 col-lg-10">
-            <button type="submit" class="btn btn-primary" data-loading-text="Ok">Create</button>
-            <span class="help-block error"></span>
-        </div>
-    </div>
+    <%-partial('../partials/posts/postForm')%>
 </form>
 
 <script>
@@ -38,9 +19,9 @@
                 $(":submit", form).button("reset");
             },
             statusCode: {
-                200: function() {
+                200: function(post) {
                     form.html("New post was created").addClass('alert-success');
-                    window.location.href = "/profile/<%= user._id %>";
+                    window.location.href = "/posts/" + post._id;
                 },
                 403: function(jqXHR) {
                     var error = JSON.parse(jqXHR.responseText);
