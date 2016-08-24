@@ -4,6 +4,7 @@ var Post = require('../models/post').Post;
 var HttpError = require('../error').HttpError;
 var Comment = require('../models/comment').Comment;
 var Rating = require('../models/rating').Rating;
+var User = require('../models/user').User;
 
 router.get('/', function(req, res, next) {
 
@@ -20,13 +21,21 @@ router.get('/new', function(req, res, next) {
 
 router.post('/search', function(req, res, next) {
   var text = req.body.text_search;
-  var search_params = (text == "") ? {} : { $text : { $search : text }};
-  Post.find(search_params)
+  var searchParams = (text == "") ? {} : { $text : { $search : text }};
+  Post.find(searchParams)
       .limit(20)
-      .populate('author')
+      .populate({ path: 'author', select: 'username' })
       .exec(function (err, posts) {
-        req.posts = res.locals.posts = posts;
-        res.render('partials/postsList',{ posts:posts, current_user: true });
+        User.find(searchParams)
+            .limit(20)
+            .populate('posts')
+            .exec(function (err, users) {
+              var allPosts =posts;
+              users.forEach(function (user) {
+                allPosts = posts.concat(user.posts);
+              });
+              res.render('partials/postsList',{ posts: allPosts, current_user: true });
+            });
       });
 });
 
