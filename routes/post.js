@@ -155,6 +155,8 @@ router.post('/:id/comment', function (req, res, next) {
       if (err) {
         res.render('error');
       }
+      var io = req.app.get('socketio');
+          io.sockets.in('' + postId).emit('comments_count', post.comments.length + 1);
       res.send({});
 
     });

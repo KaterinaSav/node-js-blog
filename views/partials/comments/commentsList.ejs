@@ -59,4 +59,13 @@
             $("tbody").toggle();
         });
     });
+
+    var socket = io();
+    socket.on('connect', function() {
+        console.log("in room");
+        socket.emit('room', '<%=post._id%>');
+    });
+     socket.on('comments_count', function(data) {
+         $('#toggle-comments').text(data + ' comments')
+     });
 </script>
