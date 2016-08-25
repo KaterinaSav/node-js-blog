@@ -22,7 +22,15 @@ var schema = new Schema({
   created: {
     type: Date,
     default: Date.now
-  }
+  },
+  comments: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Comment'
+  }],
+  ratings: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Rating'
+  }]
 });
 
 schema.index({ title: 'text' });

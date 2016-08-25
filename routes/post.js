@@ -5,6 +5,8 @@ var HttpError = require('../error').HttpError;
 var Comment = require('../models/comment').Comment;
 var Rating = require('../models/rating').Rating;
 var User = require('../models/user').User;
+var deepPopulate = require('mongoose-deep-populate');
+
 
 router.get('/', function(req, res, next) {
 
@@ -42,45 +44,49 @@ router.post('/search', function(req, res, next) {
 });
 
 router.get('/:id', function(req, res, next) {
-  var postID = req.params.id;
-  var average_rating;
-  var values = [];
+  var postId = req.params.id;
   var user = req.user;
 
-  Post.findById(postID).populate('author').exec( function(err, post) {
+  Post.findById(postId)
+      .populate('author')
+      .populate({path: 'comments',
+                 model: 'Comment',
+                 populate: {
+                   path: 'author',
+                   model: 'User'
+        }})
+      .populate('ratings')
+      .exec( function(err, post) {
     if (err) {
       res.render('error');
     }
     if (!post) {
       next(new HttpError(404, 'post not found'));
     } else {
-      req.post = res.locals.post = post;
-      Comment.find({postId: post._id}).sort({created: -1}).populate('author').exec(function(err, comments) {
-        Rating.find({post: post}, function(err, ratings) {
-          ratings.forEach(function (rating) {
-            values.push(rating.value);
-          });
-          if (values.length > 0) {
-            var sum = values.reduce(function (a, b) {
-              return a + b;
-            });
-            average_rating = sum / values.length;
-          };
-
-          Rating.findOne({author: user, post: postID}, function (err, rating) {
-            if (err) {
-              res.render('error');
-            }
-
-            res.locals.current_user_author = (user._id.toString() == post.author._id.toString());
-            res.locals.post = post;
-            res.locals.comments = comments;
-            res.locals.average_rating = average_rating ? average_rating : 0;
-            res.locals.voted = values.length;
-            res.locals.rating = rating ? rating : 0;
-            res.render('posts/show');
-          });
+        var average_rating;
+        var values = [];
+        post.ratings.forEach(function (rating) {
+          values.push(rating.value);
         });
+        if (values.length > 0) {
+          var sum = values.reduce(function (a, b) {
+            return a + b;
+          });
+          average_rating = sum / values.length;
+        };
+
+        Rating.findOne({author: user, post: post}, function (err, rating) {
+          if (err) {
+            res.render('error');
+          }
+
+          res.locals.current_user_author = (user._id.toString() == post.author._id.toString());
+          res.locals.post = post;
+          res.locals.comments = post.comments;
+          res.locals.average_rating = average_rating ? average_rating : 0;
+          res.locals.voted = values.length;
+          res.locals.rating = rating ? rating : 0;
+          res.render('posts/show');
       });
     }
   });
@@ -143,13 +149,15 @@ router.post('/:id/comment', function (req, res, next) {
   var postId = req.params.id;
   var user = req.user;
 
-  Comment.create(title, user, postId, function (err, comment) {
-    if (err) {
-      res.render('error');
-    }
+  Post.findById(postId, function(err, post) {
+    if (err) return next(err);
+    Comment.create(title, user, post, function (err, comment) {
+      if (err) {
+        res.render('error');
+      }
+      res.send({});
 
-    res.send({});
-
+    });
   });
 });
 

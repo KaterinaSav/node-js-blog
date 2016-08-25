@@ -31,6 +31,8 @@ schema.statics.create = function(value, author, post, callback) {
         rating.value = value;
       } else {
         var rating = new Rating({value: value, post: post, author: author});
+        post.ratings.push(rating);
+        post.save();
       }
       rating.save(function (err) {
         if (err) throw err;
