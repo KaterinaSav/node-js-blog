@@ -5,8 +5,6 @@ var HttpError = require('../error').HttpError;
 var Comment = require('../models/comment').Comment;
 var Rating = require('../models/rating').Rating;
 var User = require('../models/user').User;
-var deepPopulate = require('mongoose-deep-populate');
-
 
 router.get('/', function(req, res, next) {
 
@@ -32,7 +30,12 @@ router.post('/search', function(req, res, next) {
       .exec(function (err, posts) {
         User.find(searchParams)
             .limit(20)
-            .populate('posts')
+            .populate({path: 'posts',
+              model: 'Post',
+              populate: {
+                path: 'author',
+                model: 'User'
+              }})
             .exec(function (err, users) {
               var allPosts =posts;
               users.forEach(function (user) {
