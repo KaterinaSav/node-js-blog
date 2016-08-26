@@ -27,8 +27,15 @@ server.listen(port, function(){
   log.info('Express server listening on port ' + config.get('port'));
 });
 
-var io = require('../socket')(server);
-app.set('io', io);
+var io = require('socket.io')(server);
+
+app.set('socketio', io);
+
+io.on('connection', function(socket){
+  socket.on('room', function(room) {
+    socket.join(room);
+  });
+})
 
 server.on('error', onError);
 server.on('listening', onListening);

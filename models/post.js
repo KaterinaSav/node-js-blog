@@ -22,7 +22,15 @@ var schema = new Schema({
   created: {
     type: Date,
     default: Date.now
-  }
+  },
+  comments: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Comment'
+  }],
+  ratings: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Rating'
+  }]
 });
 
 schema.index({ title: 'text' });
@@ -46,22 +54,26 @@ schema.statics.create = function(title, body, user, callback) {
   ], callback);
 };
 
-schema.statics.update = function(postID, title, body, callback) {
+schema.statics.update = function(postID, title, body, user, callback) {
   var Post = this;
   async.waterfall([
     function (callback) {
       Post.findById(postID, callback);
     },
     function (post, callback) {
-      post.title = title;
-      post.body = body;
+      if (user._id.toString() == post.author.toString()) {
+        post.title = title;
+        post.body = body;
 
-      post.save(function(err) {
-        if (err) throw err;
-        callback(null, post);
+        post.save(function(err) {
+          if (err) throw err;
+          callback(null, post);
 
-        console.log('Post successfully updated!');
-      });
+          console.log('Post successfully updated!');
+        });
+      } else {
+        next( new PermissionError("no permission"));
+      }
     }
   ], callback);
 };
@@ -82,5 +94,18 @@ schema.statics.destroy = function(postId, callback) {
     }
   ], callback);
 };
+
+function PermissionError(message) {
+  Error.apply(this, arguments);
+  Error.captureStackTrace(this, PermissionError);
+
+  this.message = message;
+}
+
+util.inherits(PermissionError, Error);
+
+PermissionError.prototype.name = 'PermissionError';
+
+exports.AuthError = PermissionError;
 
 exports.Post = mongoose.model('Post', schema);

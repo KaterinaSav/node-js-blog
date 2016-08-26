@@ -8,7 +8,7 @@
     </ul>
     <ul class="nav navbar-nav navbar-right">
         <% if (user) { %>
-        <li><a href="" onclick="$('<form method=POST action=/logout>').submit();return false"><span class="glyphicon glyphicon-log-in">Выйти</span></a></form></li>
+        <li><a href="" onclick="$('<form method=POST action=/logout>').submit();return false"><span class="glyphicon glyphicon-log-in">Выйти</span></a></li>
         <% } else { %>
         <li><a href="/login"><span class="glyphicon glyphicon-user">Войти</span></a></li>
         <% } %>

@@ -1,7 +1,7 @@
 {
   "port": 3000,
   "mongoose": {
-    "uri": "mongodb://localhost/chat",
+    "uri": "mongodb://localhost/blog",
     "options": {
       "server": {
         "socketOptions": {

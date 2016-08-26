@@ -4,51 +4,32 @@
 <script src="/vendor/bower_components/socket.io-client/socket.io.js"></script>
 <link href="/vendor/bower_components/bootstrap-star-rating/css/star-rating.css" media="all" rel="stylesheet" type="text/css" />
 <script src="/vendor/bower_components/bootstrap-star-rating/js/star-rating.js" type="text/javascript"></script>
+<script src="/socket.io/socket.io.js"></script>
 
 <div id="room" class="row" >
-    <form name="comment-form">
-        <div class="container-fluid">
-            <div class="col-sm-12 blog-post">
-                <ul class="list-inline">
-                    <li><a href="/profile/<%= post.author %>" class="btn btn-primary btn-xs"><%= post.author.username %></a></li>
-                    <li><span class="label label-info"><%= post.created.toDateString()%>, <%= post.created.getHours()%>:<%= post.created.getMinutes()%></span></li>
-                    <li><span class="label label-info">Average rating: <%= average_rating %> (voted: <%= voted %>)</span></li>
-                    <li><input id="input-id" name="input-name" type="number" value="<%= rating.value %>" class="rating" min=1 max=5 step=1 data-size="xs"></li>
-                </ul>
-                <h2><%= post.title%></h2>
-                <p class="lead"><%=post.body%></p>
-            </div>
-            <div class="col-sm-7">
-                <table class=" table comments">
-                    <thead>
-                        <tr>
-                            <th><input class="form-control" autocomplete="off" name="title" autofocus placeholder="Комментарий..."></th>
-                            <td><button id="toggle-comments" class="btn btn-default">Comments: <%= comments.length %></button></td>
-                        </tr>
-
-                    </thead>
-                    <tbody>
-                    <% comments.forEach(function(comment) { %>
-                    <tr>
-                        <td>
-                            <ul class="list-inline">
-                                <li><a href="/profile/<%= comment.author %>" class="btn btn-primary btn-xs"><%= comment.author.username %></a></li>
-                                <li><span class="label label-info"><%= comment.created.toDateString()%>, <%= comment.created.getHours()%>:<%= comment.created.getMinutes()%></span></li>
-                            </ul>
-                            <p><%= comment.title %></p>
-                        </td>
-                    </tr>
-                    <% }) %>
-                    </tbody>
-                </table>
-            </div>
+    <div class="container-fluid">
+        <div class="col-sm-12 blog-post">
+            <ul class="list-inline">
+                <li><a href="/profile/<%= post.author %>" class="btn btn-primary btn-xs"><%= post.author.username %></a></li>
+                <li><span class="label label-info"><%= post.created.toDateString()%>, <%= post.created.getHours()%>:<%= post.created.getMinutes()%></span></li>
+                <li><span class="label label-info">Average rating: <%= average_rating %> (voted: <%= voted %>)</span></li>
+                <li><input id="rating-id" name="input-name" type="number" value="<%= rating.value %>" class="rating" min=1 max=5 step=1 data-size="xs"></li>
+                <% if (current_user_author) {%>
+                <li><a href="/posts/<%= post._id %>/edit" class="btn btn-primary btn-xs" role="button"><span class="glyphicon glyphicon-pencil"></span></a></li>
+                <% } %>
+            </ul>
+            <h2><%= post.title%></h2>
+            <p class="lead"><%=post.body%></p>
         </div>
-    </form>
+        <div class="col-sm-7" id="table-comments">
+            <%-partial('../partials/comments/commentsList')%>
+        </div>
+    </div>
 </div>
 
 
 <script>
-    $('#input-id').on('rating.change', function(event, value, caption) {
+    $('#rating-id').on('rating.change', function(event, value, caption) {
         $.ajax({
             url: "/posts/<%= post._id %>/rating",
             method: "POST",
@@ -63,7 +44,7 @@
 
         return false;
     });
-    $('#input-id').on('rating.clear', function(event, value, caption) {
+    $('#rating-id').on('rating.clear', function(event, value, caption) {
         $.ajax({
             url: "/posts/<%= post._id %>/rating/destroy",
             method: "POST",
@@ -78,35 +59,5 @@
 
         return false;
     });
-    $(document.forms['comment-form']).on('submit', function() {
-        var form = $(this);
-        $('.error', form).html('');
-        $(":submit", form).button("loading");
-        $.ajax({
-            url: "/posts/<%= post._id %>/comment",
-            method: "POST",
-            data: form.serialize(),
-            complete: function() {
-                $(":submit", form).button("reset");
-            },
-            statusCode: {
-                200: function() {
-                    form.html("Изменения сохранены").addClass('alert-success');
-                    window.location.href = "/posts/<%= post._id %>";
-                },
-                403: function(jqXHR) {
-                    var error = JSON.parse(jqXHR.responseText);
-                    $('.error', form).html(error.message);
-                }
-            }
-        });
 
-        return false;
-    });
-    $(document).ready(function(){
-        $("tbody").hide();
-        $("#toggle-comments").click(function(){
-            $("tbody").toggle();
-        });
-    });
 </script>

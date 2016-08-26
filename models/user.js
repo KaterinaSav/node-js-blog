@@ -82,42 +82,48 @@ schema.statics.authorize = function(username, password, callback) {
   ], callback);
 };
 
-schema.statics.update = function(userId, username, firstName, lastName, city, callback) {
+schema.statics.update = function(userId, username, firstName, lastName, city, paramsId, callback) {
   var User = this;
   async.waterfall([
     function (callback) {
       User.findById(userId, callback);
     },
     function (user, callback) {
+      if (userId == paramsID) {
+        user.username = username;
+        user.firstName = firstName;
+        user.lastName = lastName;
+        user.city = city;
 
-      user.username = username;
-      user.firstName = firstName;
-      user.lastName = lastName;
-      user.city = city;
+        user.save(function(err) {
+          if (err) throw err;
+          callback(null, user);
 
-      user.save(function(err) {
-        if (err) throw err;
-        callback(null, user);
-
-        console.log('User successfully updated!');
-      });
+          console.log('User successfully updated!');
+        });
+      } else {
+        next( new AuthError("No permission"));
+      }
     }
   ], callback);
 };
 
-schema.statics.destroy = function(userId, callback) {
+schema.statics.destroy = function(userId, paramsId, callback) {
   var User = this;
   async.waterfall([
     function (callback) {
       User.findById(userId, callback);
     },
     function (user, callback) {
-
-      user.remove( function( err, user) {
-        if (err) throw err;
-        callback(null, user);
-        console.log("Destroyed: " + user + " successfully!");
-      });
+      if (userId == paramsID) {
+        user.remove(function (err, user) {
+          if (err) throw err;
+          callback(null, user);
+          console.log("Destroyed: " + user + " successfully!");
+        });
+      } else {
+        next( new AuthError("No permission"));
+      }
     }
   ], callback);
 };

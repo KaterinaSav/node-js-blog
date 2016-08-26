@@ -14,8 +14,9 @@ var schema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'User'
   },
-  postId: {
-    type: String
+  post: {
+    type: Schema.Types.ObjectId,
+    ref: 'Post'
   },
   created: {
     type: Date,
@@ -23,14 +24,16 @@ var schema = new Schema({
   }
 });
 
-schema.statics.create = function(title, author, postId, callback) {
+schema.statics.create = function(title, author, post, callback) {
   var Comment = this;
   async.waterfall([
     function (callback) {
-      var comment = new Comment({title: title, postId: postId, author: author});
+      var comment = new Comment({title: title, post: post, author: author});
       comment.save(function (err) {
         if (err) throw err;
         callback(null, comment);
+        post.comments.push(comment);
+        post.save();
 
         console.log('Comment successfully created!');
       });
